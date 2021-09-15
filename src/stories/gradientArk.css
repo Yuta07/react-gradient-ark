@@ -1,0 +1,24 @@
+.gradient-container {
+	display: block;
+	margin: 50px;
+	padding: 0;
+	position: relative;
+}
+
+.image-flame {
+	width: 150px;
+	height: 150px;
+	margin: 0;
+	padding: 0;
+	background: #fefefe;
+	border-radius: 50%;
+	display: inline-block;
+	overflow: hidden;
+	position: relative;
+}
+
+.image-file {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
