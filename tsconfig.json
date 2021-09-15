@@ -17,6 +17,6 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "exclude": ["node_modules", "__tests__"],
+  "exclude": ["node_modules", "__tests__", "src/stories"],
   "include": ["src/**/*.ts", "src/**/*.tsx"]
 }
