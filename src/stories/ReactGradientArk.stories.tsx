@@ -6,7 +6,7 @@ import './gradientArk.css'
 import { GradientArk } from '../components/ReactGradientArk'
 
 export default {
-	title: 'Example/ReactGradientArk',
+	title: 'ReactGradientArk',
 	component: GradientArk,
 	argTypes: {
 		backgroundColor: { control: 'color' },
