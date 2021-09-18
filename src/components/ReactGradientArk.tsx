@@ -31,15 +31,15 @@ export const GradientArk = (): JSX.Element => {
 						gradient.addColorStop(0.8, ' #b49fda')
 						gradient.addColorStop(1, '#7ac5d8')
 
-						angle += Math.PI / 120
+						angle += Math.PI / 40 // how far will it go
 						if (angle < 0 || angle > Math.PI * 2) {
-							angle = 0
+							angle = 0 // return after one lap
 						}
 
-						const e = angle - Math.PI / 2
+						const end = angle - Math.PI / 2
 
 						ctx.beginPath()
-						ctx.arc(90, 90, 88, Math.PI * 1.3, e, true)
+						ctx.arc(90, 90, 88, Math.PI / -1.6, end, false)
 						ctx.lineWidth = 4
 						ctx.lineCap = 'round'
 						ctx.strokeStyle = gradient
