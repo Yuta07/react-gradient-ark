@@ -16,6 +16,8 @@ export const GradientArk = (): JSX.Element => {
 				ctx.globalCompositeOperation = 'destination-over'
 
 				let angle = 0
+				let movement = 0
+				const startPosition = Math.PI / -1.6
 
 				const outline = {
 					x: 90,
@@ -36,14 +38,17 @@ export const GradientArk = (): JSX.Element => {
 							angle = 0 // return after one lap
 						}
 
+						const start = startPosition + movement
 						const end = angle - Math.PI / 2
 
 						ctx.beginPath()
-						ctx.arc(90, 90, 88, Math.PI / -1.6, end, false)
+						ctx.arc(90, 90, 88, start, end, false)
 						ctx.lineWidth = 4
 						ctx.lineCap = 'round'
 						ctx.strokeStyle = gradient
 						ctx.stroke()
+
+						movement += Math.PI / 240
 
 						window.requestAnimationFrame(outline.draw)
 					},
