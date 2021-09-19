@@ -18,12 +18,13 @@ export const GradientArk = (): JSX.Element => {
 				let angle = 0
 				let movement = 0
 				const startPosition = Math.PI / -1.6
+				const gradientLine = 40
 
 				const outline = {
 					x: 90,
 					y: 90,
 					radius: 88,
-					draw: function () {
+					draw: function (i: number) {
 						ctx.clearRect(0, 0, 180, 180)
 
 						const gradient = ctx.createLinearGradient(0, 500, 0, 0)
@@ -68,7 +69,9 @@ export const GradientArk = (): JSX.Element => {
 					},
 				}
 
-				window.requestAnimationFrame(outline.draw)
+				for (let i = 0; i < 1; i++) {
+					outline.draw(i)
+				}
 				strokeline.draw()
 			}
 		}
