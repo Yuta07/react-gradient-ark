@@ -7,24 +7,30 @@ export const GradientArk = (): JSX.Element => {
 	useEffect(() => {
 		const canvas: HTMLCanvasElement = document.getElementById('canvas') as HTMLCanvasElement
 
-		const time = new Date()
-
 		if (canvas.getContext) {
 			const ctx = canvas.getContext('2d')
 
 			if (ctx) {
 				ctx.globalCompositeOperation = 'destination-over'
 
-				let angle = 0
-				let movement = 0
-				const startPosition = Math.PI / -1.6
-				const gradientLine = 40
+				const gradientLineCount = 40 // all gradient line count
 
+				const baseAngle = Math.PI / 2 // how far has it progressed overall
+				const baseMovement = 0
+				const basePosition = baseAngle + baseMovement
+
+				let angle = 0 // how far will it go
+				let movement = 0
+
+				// gradient line
 				const outline = {
 					x: 90,
 					y: 90,
 					radius: 88,
-					draw: function (i: number) {
+					redraw: function (startPosition?: number, endPosition?: number) {
+						let doAnim = true
+
+						// clearRectからrequestAnimationFlameが一つのライン
 						ctx.clearRect(0, 0, 180, 180)
 
 						const gradient = ctx.createLinearGradient(0, 500, 0, 0)
@@ -34,13 +40,15 @@ export const GradientArk = (): JSX.Element => {
 						gradient.addColorStop(0.8, ' #b49fda')
 						gradient.addColorStop(1, '#7ac5d8')
 
-						angle += Math.PI / 40 // how far will it go
-						if (angle < 0 || angle > Math.PI * 2) {
-							angle = 0 // return after one lap
-						}
+						const start = basePosition + movement
+						const end = Math.PI / 2 + angle
 
-						const start = startPosition + movement
-						const end = angle - Math.PI / 2
+						angle += 0.1
+
+						// animation stop position
+						if (end > 2) {
+							doAnim = false
+						}
 
 						ctx.beginPath()
 						ctx.arc(90, 90, 88, start, end, false)
@@ -49,12 +57,32 @@ export const GradientArk = (): JSX.Element => {
 						ctx.strokeStyle = gradient
 						ctx.stroke()
 
-						movement += Math.PI / 240
+						movement += Math.PI / 200
 
-						window.requestAnimationFrame(outline.draw)
+						if (!doAnim) return
+
+						window.requestAnimationFrame(outline.redraw)
+					},
+					draw: function () {
+						// for (let i = 0; i < 40; i++) {
+						// baseAngle += Math.PI / 80
+						// baseMovement += Math.PI / 240
+						// basePosition = baseAngle + baseMovement + 0.05
+						outline.redraw(1, 1)
+						// }
+
+						let count = 1
+						const intervalID = setInterval(() => {
+							if (count > gradientLineCount) clearInterval(intervalID)
+
+							outline.redraw(1, 1)
+
+							count++
+						}, 100)
 					},
 				}
 
+				// white line around the image
 				const strokeline = {
 					x: 90,
 					y: 90,
@@ -69,9 +97,7 @@ export const GradientArk = (): JSX.Element => {
 					},
 				}
 
-				for (let i = 0; i < 1; i++) {
-					outline.draw(i)
-				}
+				window.requestAnimationFrame(outline.draw)
 				strokeline.draw()
 			}
 		}
