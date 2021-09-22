@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 
 // base style
 import './index.css'
@@ -6,7 +6,8 @@ import './index.css'
 export const GradientArk = (): JSX.Element => {
 	useEffect(() => {
 		const canvas: HTMLCanvasElement = document.getElementById('canvas') as HTMLCanvasElement
-		const gradientLineCount = 40 // all gradient line count
+		const gradientLineCount = 9 // all gradient line count
+		const baseSetTime = 20 // base time for setTimeout
 
 		if (canvas.getContext) {
 			const ctx = canvas.getContext('2d')
@@ -14,20 +15,20 @@ export const GradientArk = (): JSX.Element => {
 			if (ctx) {
 				ctx.globalCompositeOperation = 'destination-over'
 
-				const baseAngle = Math.PI / 2 // how far has it progressed overall
+				const baseAngle = Math.PI / Math.PI // how far has it progressed overall - 1.57
 				const baseMovement = 0
 				const baseStartPosition = baseAngle + baseMovement
-				const baseEndPosition = baseStartPosition + 0.167
+				const baseEndPosition = baseStartPosition + 0.083
 
 				let angle = 0 // how far will it go
 
-				// gradient line
+				// gradient line around the image
 				const outline = {
 					x: 90,
 					y: 90,
 					radius: 88,
 					redraw: function (startPosition: number, endPosition: number) {
-						let doAnim = true
+						// let doAnim = true
 
 						// clearRectからrequestAnimationFlameが一つのライン
 						// ctx.clearRect(0, 0, 180, 180)
@@ -39,13 +40,8 @@ export const GradientArk = (): JSX.Element => {
 						gradient.addColorStop(0.8, ' #b49fda')
 						gradient.addColorStop(1, '#7ac5d8')
 
-						const start = Number(startPosition)
+						const start = startPosition
 						const end = endPosition + angle
-
-						// animation stop position
-						if (end > Number(endPosition)) {
-							doAnim = false
-						}
 
 						ctx.beginPath()
 						ctx.arc(90, 90, 88, start, end, false)
@@ -54,17 +50,15 @@ export const GradientArk = (): JSX.Element => {
 						ctx.strokeStyle = gradient
 						ctx.stroke()
 
-						angle += 0.02
-
-						if (!doAnim) return
+						angle += 0.002
 
 						window.requestAnimationFrame(() => {
 							outline.redraw(startPosition, endPosition)
 						})
 					},
-					draw: function (a: number, b: number) {
+					draw: function (startPositoin: number, endPosition: number) {
 						window.requestAnimationFrame(() => {
-							outline.redraw(a, b)
+							outline.redraw(startPositoin, endPosition)
 						})
 					},
 				}
@@ -84,23 +78,29 @@ export const GradientArk = (): JSX.Element => {
 					},
 				}
 
-				let count = 1
+				let count = 0
 				let baseTime = 0
 
 				const main = () => {
 					if (count > gradientLineCount) return
 
-					outline.draw(baseStartPosition + count * 0.167, baseEndPosition + count * 0.167)
-					// outline.draw(baseStartPosition + 0.167 + 0.15, baseEndPosition + 0.167 + 0.15)
+					console.log(baseStartPosition + count * 0.5, baseEndPosition + count * 0.5)
+
+					// end -> 8.77
+					outline.draw(baseStartPosition + count * 0.5, baseStartPosition + count * 0.5)
 
 					count += 1
-					baseTime += 5
+					baseTime += baseSetTime
 
-					setTimeout(main, baseTime)
+					window.requestAnimationFrame(() => {
+						setTimeout(main, baseTime)
+					})
 				}
 
+				// start main stroke function
 				main()
 
+				// start white line stroke function
 				strokeline.draw()
 			}
 		}
