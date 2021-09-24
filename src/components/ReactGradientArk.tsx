@@ -6,8 +6,7 @@ import './index.css'
 export const GradientArk = (): JSX.Element => {
 	useEffect(() => {
 		const canvas: HTMLCanvasElement = document.getElementById('canvas') as HTMLCanvasElement
-		const gradientLineCount = 5 // all gradient line count
-		const baseSetTime = 5 // all gradient line count
+		const gradientLineCount = 40 // all gradient line count
 
 		if (canvas.getContext) {
 			const ctx = canvas.getContext('2d')
@@ -15,43 +14,44 @@ export const GradientArk = (): JSX.Element => {
 			if (ctx) {
 				ctx.globalCompositeOperation = 'destination-over'
 
-				let baseStartPosition = Math.PI / Math.PI
-				let baseEndPosition = baseStartPosition + 0.05
-
 				let angle = 0 // how far will it go
 				let movement = 0
 
 				// gradient line around the image
-				const draw = (startPosition: number, endPosition: number, count: number) => {
-					const start = startPosition + angle
-					const end = startPosition + angle + movement
+				const gradientLine = {
+					angle: 0, // how far will it go
+					movement: 0,
+					draw: function (startPosition: number, baseStartEndPosition: number, endPosition: number, count: number) {
+						const start = startPosition + angle
+						const end = baseStartEndPosition + movement
 
-					if (end < endPosition) ctx.clearRect(0, 0, 180, 180)
+						const gradient = ctx.createLinearGradient(0, 500, 0, 0)
+						gradient.addColorStop(0, '#eea2a2')
+						gradient.addColorStop(0.2, '#bbc1bf')
+						gradient.addColorStop(0.45, '#57c6e1')
+						gradient.addColorStop(0.8, ' #b49fda')
+						gradient.addColorStop(1, '#7ac5d8')
 
-					const gradient = ctx.createLinearGradient(0, 500, 0, 0)
-					gradient.addColorStop(0, '#eea2a2')
-					gradient.addColorStop(0.2, '#bbc1bf')
-					gradient.addColorStop(0.45, '#57c6e1')
-					gradient.addColorStop(0.8, ' #b49fda')
-					gradient.addColorStop(1, '#7ac5d8')
+						ctx.save()
 
-					ctx.save()
+						ctx.beginPath()
+						ctx.arc(90, 90, 88, start, end, false)
+						ctx.lineWidth = 2
+						ctx.lineCap = 'round'
+						ctx.strokeStyle = gradient
+						ctx.stroke()
 
-					ctx.beginPath()
-					ctx.arc(90, 90, 88, start, end, false)
-					ctx.lineWidth = 4
-					ctx.lineCap = 'round'
-					ctx.strokeStyle = gradient
-					ctx.stroke()
+						ctx.restore()
 
-					angle += 0.005
-					movement += 0.004
+						if (end < endPosition) {
+							angle += 0.01
+							movement += 0.015
+						}
 
-					ctx.restore()
-
-					window.requestAnimationFrame(() => {
-						draw(startPosition, endPosition, count)
-					})
+						requestAnimationFrame(() => {
+							this.draw(startPosition, baseStartEndPosition, endPosition, count)
+						})
+					},
 				}
 
 				// white line around the image
@@ -63,26 +63,33 @@ export const GradientArk = (): JSX.Element => {
 					draw: function () {
 						ctx.beginPath()
 						ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, true)
-						ctx.lineWidth = 2
+						ctx.lineWidth = 1
 						ctx.strokeStyle = this.color
 						ctx.stroke()
 					},
 				}
 
 				let count = 0
-				let baseTime = 5
+				let baseStartPosition = Math.PI / Math.PI
+				let baseStartEndPosition = baseStartPosition + 0.01
+				let baseEndPosition = baseStartPosition + 0.05 + 0.01
 
 				const main = () => {
 					if (count > gradientLineCount) return
 
-					draw(baseStartPosition, baseEndPosition, count)
+					window.requestAnimationFrame(() => {
+						gradientLine.draw(baseStartPosition, baseStartEndPosition, baseEndPosition, count)
+					})
 
 					count += 1
-					baseTime += baseSetTime
-					baseStartPosition = baseEndPosition + 0.05
-					baseEndPosition = baseStartPosition + 0.05 * count
 
-					setTimeout(main, baseTime)
+					if (count > 1) {
+						baseStartPosition = baseEndPosition + 0.05
+						baseStartEndPosition = baseStartPosition + 0.01 * count
+						baseEndPosition = baseStartPosition + 0.05 + 0.02 * count
+					}
+
+					setTimeout(main, 5 * count)
 				}
 
 				// start main stroke function
